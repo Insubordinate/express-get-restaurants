@@ -7,8 +7,8 @@ const port = 3000;
 
 
 
-app.use(express.body())
-app.use(express.urlencoded())
+app.use(express.json())
+app.use(express.urlencoded({extended:true}))
 
 
 app.listen(port, () => {
@@ -24,9 +24,33 @@ app.get('/restaurants',async (req,res)=>{
 
 
 
+//Adds a restaurant to the db
+app.post('/restaurants',async(req,res)=>{
+    await Restaurant.create(req.body)
+    res.json(await Restaurant.findAll())
+})
 
 
+//Updates a restaurant 
 
+app.put('/restaurants/:id',async(req,res)=>{
+
+    await Restaurant.update(req.body,{
+        where:{
+            id:req.params.id
+        }
+    })
+    console.log('Updated')
+    res.send(await Restaurant.findAll())
+})
+
+//Removes a restaurant
+
+app.delete('/restaurants/:id',async(req,res)=>{
+    await Restaurant.destroy({where:{id:req.params.id}})
+    res.send(await Restaurant.findAll())
+    console.log('Deleted')
+})
 
 app.get('/restaurants/:id',async (req,res)=>{
     res.json(await Restaurant.findByPk(req.params.id))
