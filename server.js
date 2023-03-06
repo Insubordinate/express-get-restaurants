@@ -12,3 +12,8 @@ app.listen(port, () => {
     sequelize.sync();
     console.log("Your server is listening on port " + port);
 })
+
+
+app.get('/restaurants',async (req,res)=>{
+    res.json(await Restaurant.findAll())
+})
