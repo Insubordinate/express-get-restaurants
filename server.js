@@ -17,3 +17,7 @@ app.listen(port, () => {
 app.get('/restaurants',async (req,res)=>{
     res.json(await Restaurant.findAll())
 })
+
+app.get('/restaurants/:id',async (req,res)=>{
+    res.json(await Restaurant.findByPk(req.params.id))
+})
