@@ -1,10 +1,16 @@
-const Sequelize = require("sequelize");
-const {sequelize} = require("../db");
+const {sequelize} = require('../db');
+const { Sequelize,Model } = require('sequelize');
 
-const Restaurant = sequelize.define("restaurants", {
+
+class Restaurant extends Model{
+}
+
+Restaurant.init({
     name: Sequelize.STRING,
     location: Sequelize.STRING,
-    cuisine: Sequelize.STRING
-})
+    cuisine:Sequelize.STRING,
+    rating:Sequelize.INTEGER
+}, {sequelize});
+
 
 module.exports = {Restaurant};

@@ -1,61 +1,75 @@
 ![logo](https://user-images.githubusercontent.com/44912347/202296600-c5f247d6-9616-49db-88f0-38433429d781.jpg)
 
-# Express Restaurants
-Over the next series of lessons we will be building an application using Express that will be able to `GET`, `POST`, `PUT`, and `DELETE` values stored in a database. 
+# Restaurant Menus Database
+Today, we’re building a Sequelize DB for restaurants to organize their menus. **We will be using this across the next few lessons, so make sure to save this in a useful location!**
 
-## Setup
-After forking and cloning the repository, run the following (`npm run seed` runs the seed file):
+We’ll have 2 database models:
+- Restaurants
+- Menus
 
-```bash
-npm install
-npm run seed
-npm start
+## Part 1: Database Creation
+Now that we have the starting point, let’s get to work coding it out!  Use the following as a guide.
+
+### Setup and Tests
+- Download all depndencies by running `npm install`
+- Run `npm test` to run all the tests.
+- The test file is created, but each test is currently empty. Initially, you’ll get many errors and messages like `Test suite failed to run since there are missing parts`. Let’s get to that!
+
+### TODOs
+- Follow the TODOs in the project (you can [search across files](https://code.visualstudio.com/docs/editor/codebasics#_search-across-files) to find the spots to edit!)
+
+### Connection
+- The connection will have to be instantiated using `new Sequelize()`
+
+### Models
+- Define the models! Here are the details:
+  - The `Restaurant` model should have name location and cuisine properties, all of which are strings.
+  - The `Menu` model should have title which is also a string.
+
+### Tests
+- At this point, we can start writing the tests! Fill out each of the tests in the suite, following the describe statement provided.
+- Make sure to read the following tip regarding how to use the seed data.
+<details>
+
+You’ll notice that a file called `seedData.js` has been imported on lines 3 to 6 at the top of `index.test.js`. If you look at this data you will see that it is a list of objects that can be utilized when testing your project. For example, if you run the following you will get a value from the `seedData.js` that can be utilized in your tests.
+
+```js
+console.log(seedRestaurant[0]); // Returns "AppleBees"
 ```
 
-## Part 1: `GET` Restaurants
-1. In the `server.js` file, create a `GET` request using Express for the `/restaurants` endpoint
-2. In the `GET` request, return all restaurants via the `Restaurant.findAll()` method. 
-    - Remember to use `async` and `await`
-    - Note that you will need to run `npm run seed` once in order to put data into the restaurant database.
-3. Send the restaurants as a JSON Response (`res.json()`)
-4. Test your endpoint by visiting http://localhost:3000/restaurants. Your response should look similar to the one shown below:
+</details>
 
-![image (26)](https://user-images.githubusercontent.com/44912347/202527699-972e58f4-f0ec-4dda-a3ee-e9def56cf88a.png)
+### Commit and Push
+- `git add .`, `git commit -m “somemessage”`, and `git push` so we can see your work!
 
-## Part 2: Route Parameters
-1. In your `server.js` file, use express to handle a `GET` request to the endpoint `"/restaurants"` include a URL Parameter to the endpoint `“restaurants”` named `“id”`.
-2. In your `“/restaurants”` with the URL parameter id route handler get the particular restaurant via the method `Restaurant.findByPk()`.
-3. The endpoint will need to fetch the particular restaurant based on the value of your route parameter from the database - have a look at the Sequelize Models `findByPk()` method to help you with this.
-4. Send the found restaurant as a JSON response (`res.json()`).
-5. Test your endpoint using Postman by sending a `GET` request to `http://localhost:3000/restaurants/1`. Your browser should output the following on Postman:
+## Part 2: Associations and Eager Loading
+We are now going to add associations and eager loading to the database we created in part 1.
 
-![image](https://user-images.githubusercontent.com/44912347/202531981-59b58d9e-3a0d-473a-a2c3-c885d906a1d7.png)
+### Setup
+- Let’s start up the tests again with `npm test`. You should have a few passing from last time.
+- Let’s add a few tests using the guidelines in the next few sections.
 
-## Part 3: `POST`, `PUT`, and `DELETE` Restaurants
-1. Include middleware to parse data included in the body of your request as JSON and URL Encoded. You can use either for this activity.
-2. Create an express route for creating (adding) a new restaurant on your restaurant database.
-3. Create an express route for updating (replacing) an existing restaurant with a new restaurant on your restaurant database based on ID in the route. For example, `restaurant/2` would update the restaurant with an ID of 2.
-4. Create an express route for deleting (removing) a restaurant on your database based on the id in the route. For example, `restaurant/2` would delete the restaurant with an ID of 2.
-5. Test your “Main Assignment” endpoint on Postman by making a `GET`, `POST`, `PUT`, and `DELETE` requests to http://localhost:3000/restaurants/
+### Associations: One-to-Many
+- In `./models/index.js`, after the requires, but before the `module.exports`, associate the 2 models:
+  - Multiple menus can be added to a Restaurant.
+  - Add a third test to account for the association
 
-## Part 4: Express Router
-1. Create a new directory for your express route(s)
-2. Include a file within that directory to represent your express router
-3. Define your express router to be able to handle creating, reading, updating, and deleting resources from your Restaurants database
-4. Export your router
-5. Include a reference to your router in your main express server
-6. Use the express router in your main server
-7. Remove any pre-defined routes from your main server and use only your express router.
-8. Test your endpoints using Postman
+### New Model: `Items`
+- Define the model! Here are the details:
+  - Create a new `Item` file in the models directory
+  - The `Item` model should have name and image properties, both of which are strings
+  - The `Item` model should also have `price` (number) and `vegetarian` (boolean) properties
+- Make sure to export the model and import it anywhere you need it!
 
-## Part 5: Server Side Validation
-1. Run `npm install express-validator` to install the Express Validator package
-2. Include the check and `validationResult` methods from the Express Validator package in your Express Router for restaurants.
-3. Navigate to your POST Request route to `/restaurants` from your Express Router and include a parameter `[]` in between the endpoint and the callback function. 
-4. Within the array `[]` include a first item which checks that the “name” field in the `request.body` is not empty and doesn’t only contain whitespace
-5. Within the array `[]` include a second item that checks that the “location” in the `request.body` is not empty and doesn’t only contain whitespace
-6. Within the array `[]` include a third item that checks that the “cuisine” is the `request.body` is not empty and doesn’t only contain whitespace
-7. Within the callback function, validate the results of your checks and store them in a variable named `errors`
-8. Check that if the errors reference is not empty (there are errors), respond with a JSON that contains the key error and the value `errors.array()`
-9. If the `errors` reference is empty (there are no errors), then continue with adding the restaurant to the Restaurant DB and return a list of all the restaurants including the newly added one.
-10. Test your endpoint using Postman. Check to see if you can add a restaurant without any of the “name”, “location” or “cuisine” fields.
+### Association: Menu Items
+- Back in `./models/index.js` Associate the `Menu` and `Item` models
+  - Multiple items can be added to a menu.
+  - Items can be added to many menus
+  - Add another test to account for the association
+
+### Eager Loading
+- Add a test or two that eager loads the data.
+  - For example, find all `Menus` and include their `Item` model
+
+### Commit and Push
+- `git add .`, `git commit -m “somemessage”`, and `git push` so we can see your work!
